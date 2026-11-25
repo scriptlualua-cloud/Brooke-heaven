@@ -1,3 +1,4 @@
+
 local a=game:GetService("Players")local b=game:GetService("RunService")local c=game:GetService("UserInputService")
 local d=game:GetService("TweenService")local e=game:GetService("Workspace")local f=game:GetService("ReplicatedStorage")
 local g=game:GetService("HttpService")local h=a.LocalPlayer;
@@ -14,14 +15,13 @@ return w==s or w==p end;
 if _G.HubBlox and _G.HubBlox.stop then pcall(_G.HubBlox.stop)end;
 local y={running=true}_G.HubBlox=y;
 pcall(function()if _G.hubAimFly_Close then _G.hubAimFly_Close()end end)local z=400;
-local A={delay={0.01,1},forcaTurbo={1,10000},forcaPulo={1,5000},velFly={1,100000},altura={-100000,100000},alcance={0,1000000000},antlim={1,500},flVel={1,100000}}
-local B="hub_bloxfruits_v6.json"local C={player=true,npc=true,delay=0.08,turboOn=false,forcaTurbo=100,inf=false,forcaPulo=50,v3=true,v4=true,bot=false,fly=false,alvo="player",velFly=100,altura=0,alcance=0,ant=false,antecipa=2,antlim=30,parado=true,miraOn=true,orbs=true,cadeado=false,antiSit=false,espNpc=false,fl=false,flVel=60,flVis=true,flLock=false,flX=24,flY=-160,botX=20,botY=160,flyX=20,flyY=240}
+local A={delay={0.01,1},forcaTurbo={1,10000},forcaPulo={1,5000},velFly={1,100000},altura={-100000,100000},alcance={0,1000000000},antlim={1,500},fv={1,100000}}
+local B="hub_bloxfruits_v6.json"local C={player=true,npc=true,delay=0.08,turboOn=false,forcaTurbo=100,inf=false,forcaPulo=50,v3=true,v4=true,bot=false,fly=false,npcAlvo=false,velFly=100,altura=0,alcance=0,ant=false,antecipa=2,antlim=30,parado=true,miraOn=true,orbs=true,cadeado=false,asit=false,enp=false,fl=false,fv=60,fw=true,fk=false,fx2=24,flY=-160,botX=20,botY=160,flyX=20,flyY=240}
 local D=2.2;
 local E=26;
 local function F()pcall(function()if writefile then writefile(B,g:JSONEncode(C))end end)end;
 pcall(function()if isfile and readfile and isfile(B)then local G=g:JSONDecode(readfile(B))for H,I in pairs(G)do if C[H]~=nil and type(I)==type(C[H])
 then C[H]=I end end end end)C.bot,C.fly=false,false;
-if C.alvo~="npc"then C.alvo="player"end;
 local J={}local function K(L,M)local N=L:Connect(M)table.insert(J,N)return N end;
 local O={}local function P(Q,M)O[Q]=O[Q]or{}table.insert(O[Q],M)end;
 local function R(Q)for S,M in ipairs(O[Q]or{})do pcall(M)end end;
@@ -77,180 +77,184 @@ C[Q]=math.clamp(I,aG,aH)aQ()F()end;
 K(aN.MouseButton1Click,function()aR(C[Q]-aE[aI])end)K(aO.MouseButton1Click,function()aR(C[Q]+aE[aI])end)K(aK.MouseButton1Click,function()
 aI=aI%#aE+1;
 aQ()end)K(aP.FocusLost,function()local aS=tonumber(aP.Text)if aS then aR(aS)else aQ()end end)aQ()end;
-local function aT(ao,Q,aU,aV)local a4=ad("TextButton",{Size=i(1,-8,0,34),BackgroundColor3=a9,Text="",AutoButtonColor=false},at)
-ag(a4)local aW=ad("TextLabel",{Size=i(1,-20,1,0),Position=i(0,10,0,0),BackgroundTransparency=1,Text="",TextColor3=ac,Font=q,TextSize=14,TextXAlignment=r},a4)
-local function aQ()for v,I in ipairs(aU)do if C[Q]==I then aW.Text=ao..": "..aV[v]end end end;
-aQ()P(Q,aQ)K(a4.MouseButton1Click,function()local aX=1;
-for v,I in ipairs(aU)do if C[Q]==I then aX=v end end;
-C[Q]=aU[aX%#aU+1]R(Q)F()end)end;
 T("m",function()ay("COMBATE")az("Bater em Players","player")az("Bater em NPCs","npc")aD("Velocidade do ataque","delay",{0.01,0.05,0.1},"%.2f")
 ay("MOVIMENTO")az("Turbo Impulso","turboOn")aD("Velocidade do Turbo","forcaTurbo",{1,10,100},"%g")az("Pulo infinito","inf")
 aD("Força do Pulo","forcaPulo",{1,10,100},"%g")ay("RAÇA")az("V3 automático","v3")az("V4 automático","v4")ay("MIRA E VOO")
-az("BOT (trava no alvo)","bot")az("FLY (voa até o alvo)","fly")aT("Alvo","alvo",{"player","npc"},{"PLAYER","NPC"})
-aD("Velocidade do FLY","velFly",{1,10,100},"%g")aD("Altura do FLY (- = abaixo)","altura",{1,10,100},"%g")aD("Distância (0 = qualquer)","alcance",{1,10,100},"%g")
+az("BOT (trava no alvo)","bot")az("FLY (voa até o alvo)","fly")az("Alvo: NPC (apagado=Player)","npcAlvo")aD("Velocidade do FLY","velFly",{1,10,100},"%g")
+aD("Altura do FLY (- = abaixo)","altura",{1,10,100},"%g")aD("Distância (0 = qualquer)","alcance",{1,10,100},"%g")
 az("Antecipar movimento","ant")aD("Limite antecipação","antlim",{1,10,100},"%g")az("Parado no ar","parado")az("Bolinha da mira","miraOn")
-az("Bolinhas na tela","orbs")az("Cadeado das bolinhas","cadeado")ay("EXTRA")az("Não sentar","antiSit")az("ESP NPC","espNpc")
-ay("FLY LIVRE")az("Fly Livre","fl")aD("Velocidade do Fly Livre","flVel",{1,10,100},"%g")az("Mostrar joystick","flVis")
-az("Cadeado Fly Livre","flLock")end)local aY=ad("TextButton",{Size=j(46,46),Position=i(0,12,0.5,0),BackgroundColor3=a8,BackgroundTransparency=.05,Text="👾",TextSize=22,Visible=false,AutoButtonColor=false},a6)
-ag(aY,23)ad("UIStroke",{Color=ac,Thickness=1.5,Transparency=.3},aY)local aZ=false;
-K(ar.MouseButton1Click,function()aZ=not aZ;
-at.Visible=not aZ;
-al.Size=aZ and j(ai,ak)or j(ai,aj)ar.Text=aZ and"+"or"-"end)K(as.MouseButton1Click,function()al.Visible=false;
-aY.Visible=true end)do local au,av,aw,a_=false,nil,nil,0;
-K(aY.InputBegan,function(v)if u(v)then au,av,aw,a_=true,v.Position,aY.Position,0;
+az("Bolinhas na tela","orbs")az("Cadeado das bolinhas","cadeado")ay("EXTRA")az("Não sentar","asit")az("ESP NPC","enp")
+ay("FLY LIVRE")az("Fly Livre","fl")aD("Velocidade do Fly Livre","fv",{1,10,100},"%g")az("Mostrar joystick","fw")
+end)local aT=ad("TextButton",{Size=j(46,46),Position=i(0,12,0.5,0),BackgroundColor3=a8,BackgroundTransparency=.05,Text="👾",TextSize=22,Visible=false,AutoButtonColor=false},a6)
+ag(aT,23)ad("UIStroke",{Color=ac,Thickness=1.5,Transparency=.3},aT)local aU=false;
+K(ar.MouseButton1Click,function()aU=not aU;
+at.Visible=not aU;
+al.Size=aU and j(ai,ak)or j(ai,aj)ar.Text=aU and"+"or"-"end)K(as.MouseButton1Click,function()al.Visible=false;
+aT.Visible=true end)do local au,av,aw,aV=false,nil,nil,0;
+K(aT.InputBegan,function(v)if u(v)then au,av,aw,aV=true,v.Position,aT.Position,0;
 v.Changed:Connect(function()if v.UserInputState==Enum.UserInputState.End then au=false;
-if a_<8 then al.Visible=true;
-aY.Visible=false end end end)end end)K(c.InputChanged,function(v)if au and x(v)then local ax=v.Position-av;
-a_=math.max(a_,ax.Magnitude)aY.Position=i(aw.X.Scale,aw.X.Offset+ax.X,aw.Y.Scale,aw.Y.Offset+ax.Y)end end)end;
-T("b",function()do local b0=ad("Frame",{Name="MiraDot",AnchorPoint=Vector2.new(0.5,0.5),Size=j(4,4),Position=i(0.5,0,0.5,-E),BackgroundColor3=ac,BorderSizePixel=0,Active=false,ZIndex=10,Visible=C.miraOn},a6)
-ag(b0,2)ad("UIStroke",{Color=Color3.new(0,0,0),Thickness=1,ApplyStrokeMode=Enum.ApplyStrokeMode.Border},b0)P("miraOn",function()
-b0.Visible=C.miraOn end)end;
-do local b1=64;
-local b2=l(150,150,150)local function b3(ap,b4)local V,b5=pcall(function()return e.CurrentCamera.ViewportSize end)
-if V and b5 and b5.X>0 and b5.Y>0 then ap=math.max(0,math.min(ap,b5.X-b1))b4=math.max(0,math.min(b4,b5.Y-b1))end;
-return ap,b4 end;
-local function b6(ao,Q,b7,b8)local ap,b4=b3(C[b7],C[b8])local ah=ad("TextButton",{Size=j(b1,b1),Position=j(ap,b4),BackgroundColor3=a8,BackgroundTransparency=.35,Text=ao,TextColor3=b2,Font=q,TextSize=16,AutoButtonColor=false,Visible=C.orbs},a6)
-ag(ah,b1/2)local b9=ad("UIStroke",{Color=b2,Thickness=1},ah)local function ba()local bb=C[Q]ah.BackgroundTransparency=bb and.05 or.35;
-ah.TextColor3=bb and ac or b2;
-b9.Color=bb and ac or b2;
-b9.Thickness=bb and 3 or 1 end;
-ba()P(Q,ba)P("orbs",function()ah.Visible=C.orbs end)local au,av,aw,a_,bc=false,nil,nil,0,nil;
-K(ah.InputBegan,function(v)if u(v)then au,av,aw,a_,bc=true,v.Position,ah.Position,0,v end end)K(c.InputChanged,function(v)
+if aV<8 then al.Visible=true;
+aT.Visible=false end end end)end end)K(c.InputChanged,function(v)if au and x(v)then local ax=v.Position-av;
+aV=math.max(aV,ax.Magnitude)aT.Position=i(aw.X.Scale,aw.X.Offset+ax.X,aw.Y.Scale,aw.Y.Offset+ax.Y)end end)end;
+T("b",function()do local aW=ad("Frame",{Name="MiraDot",AnchorPoint=Vector2.new(0.5,0.5),Size=j(4,4),Position=i(0.5,0,0.5,-E),BackgroundColor3=ac,BorderSizePixel=0,Active=false,ZIndex=10,Visible=C.miraOn},a6)
+ag(aW,2)ad("UIStroke",{Color=Color3.new(0,0,0),Thickness=1,ApplyStrokeMode=Enum.ApplyStrokeMode.Border},aW)P("miraOn",function()
+aW.Visible=C.miraOn end)end;
+do local aX=64;
+local aY=l(150,150,150)local function aZ(ap,a_)local V,b0=pcall(function()return e.CurrentCamera.ViewportSize end)
+if V and b0 and b0.X>0 and b0.Y>0 then ap=math.max(0,math.min(ap,b0.X-aX))a_=math.max(0,math.min(a_,b0.Y-aX))end;
+return ap,a_ end;
+local function b1(ao,Q,b2,b3)local ap,a_=aZ(C[b2],C[b3])local ah=ad("TextButton",{Size=j(aX,aX),Position=j(ap,a_),BackgroundColor3=a8,BackgroundTransparency=.35,Text=ao,TextColor3=aY,Font=q,TextSize=16,AutoButtonColor=false,Visible=C.orbs},a6)
+ag(ah,aX/2)local b4=ad("UIStroke",{Color=aY,Thickness=1},ah)local function b5()local b6=C[Q]ah.BackgroundTransparency=b6 and.05 or.35;
+ah.TextColor3=b6 and ac or aY;
+b4.Color=b6 and ac or aY;
+b4.Thickness=b6 and 3 or 1 end;
+b5()P(Q,b5)P("orbs",function()ah.Visible=C.orbs end)local au,av,aw,aV,b7=false,nil,nil,0,nil;
+K(ah.InputBegan,function(v)if u(v)then au,av,aw,aV,b7=true,v.Position,ah.Position,0,v end end)K(c.InputChanged,function(v)
 if not au then return end;
-local bd=v.UserInputType==p or v.UserInputType==s and v==bc;
-if not bd then return end;
+local b8=v.UserInputType==p or v.UserInputType==s and v==b7;
+if not b8 then return end;
 local ax=v.Position-av;
-a_=math.max(a_,ax.Magnitude)if a_>=8 and not C.cadeado then ah.Position=i(aw.X.Scale,aw.X.Offset+ax.X,aw.Y.Scale,aw.Y.Offset+ax.Y)
+aV=math.max(aV,ax.Magnitude)if aV>=8 and not C.cadeado then ah.Position=i(aw.X.Scale,aw.X.Offset+ax.X,aw.Y.Scale,aw.Y.Offset+ax.Y)
 end end)K(c.InputEnded,function(v)if not au then return end;
-local be=v==bc or v.UserInputType==t and bc and bc.UserInputType==t;
-if not be then return end;
+local b9=v==b7 or v.UserInputType==t and b7 and b7.UserInputType==t;
+if not b9 then return end;
 au=false;
-if a_<8 then C[Q]=not C[Q]R(Q)elseif not C.cadeado then C[b7],C[b8]=ah.Position.X.Offset,ah.Position.Y.Offset;
+if aV<8 then C[Q]=not C[Q]R(Q)elseif not C.cadeado then C[b2],C[b3]=ah.Position.X.Offset,ah.Position.Y.Offset;
 F()end end)end;
-b6("BOT","bot","botX","botY")b6("FLY","fly","flyX","flyY")end end)y.stop=function()y.running=false;
+b1("BOT","bot","botX","botY")b1("FLY","fly","flyX","flyY")end end)y.stop=function()y.running=false;
 pcall(function()b:UnbindFromRenderStep("HubBloxAim")end)for S,N in ipairs(J)do pcall(function()N:Disconnect()end)
 end;
 pcall(a5)a1()pcall(function()a6:Destroy()end)end;
-T("c",function()local bf,bg,bh,bi;
-o(function()pcall(function()bf=f:WaitForChild("Remotes",15):WaitForChild("CommF_",15)local bj=f:WaitForChild("Modules",15):WaitForChild("Net",15)
-bg=bj:WaitForChild("RE/RegisterAttack",15)bh=bj:WaitForChild("RE/RegisterHit",15)end)pcall(function()bi=f:WaitForChild("Remotes",15):WaitForChild("CommE",15)
-end)end)local function bk()local bl,bm,bn={},nil,z;
-local bo=Z(m())if not bo then return bl,nil end;
-local function bp(bq)local br=Z(bq)if not br or not _(bq)then return end;
-local ax=(br.Position-bo.Position).Magnitude;
+T("c",function()local ba,bb,bc,bd;
+o(function()pcall(function()ba=f:WaitForChild("Remotes",15):WaitForChild("CommF_",15)local be=f:WaitForChild("Modules",15):WaitForChild("Net",15)
+bb=be:WaitForChild("RE/RegisterAttack",15)bc=be:WaitForChild("RE/RegisterHit",15)end)pcall(function()bd=f:WaitForChild("Remotes",15):WaitForChild("CommE",15)
+end)end)local function bf()local bg,bh,bi={},nil,z;
+local bj=Z(m())if not bj then return bg,nil end;
+local function bk(bl)local bm=Z(bl)if not bm or not _(bl)then return end;
+local ax=(bm.Position-bj.Position).Magnitude;
 if ax>z then return end;
-table.insert(bl,{bq,bq:FindFirstChild("Head")or br})if ax<=bn then bm,bn=br,ax end end;
-if C.npc then local bs=e:FindFirstChild("Enemies")if bs then for S,bt in ipairs(bs:GetChildren())do bp(bt)end end end;
-if C.player then for S,ae in ipairs(a:GetPlayers())do if ae~=h and ae.Character then bp(ae.Character)end end end;
-return bl,bm end;
-o(function()while y.running do local N=m()if bf and N and _(N)and not N:FindFirstChild("HasBuso")then pcall(function()
-bf:InvokeServer("Buso")end)end;
-n(1)end end)o(function()while y.running do local N=m()local bu=N and N:FindFirstChildOfClass("Tool")if bu and _(N)
-and(C.player or C.npc)then local bv,bm=bk()if#bv>0 then if bg then pcall(function()bg:FireServer(0.40000000596046448,1)
+table.insert(bg,{bl,bl:FindFirstChild("Head")or bm})if ax<=bi then bh,bi=bm,ax end end;
+if C.npc then local bn=e:FindFirstChild("Enemies")if bn then for S,bo in ipairs(bn:GetChildren())do bk(bo)end end end;
+if C.player then for S,ae in ipairs(a:GetPlayers())do if ae~=h and ae.Character then bk(ae.Character)end end end;
+return bg,bh end;
+o(function()while y.running do local N=m()if ba and N and _(N)and not N:FindFirstChild("HasBuso")then pcall(function()
+ba:InvokeServer("Buso")end)end;
+n(1)end end)o(function()while y.running do local N=m()local bp=N and N:FindFirstChildOfClass("Tool")if bp and _(N)
+and(C.player or C.npc)then local bq,bh=bf()if#bq>0 then if bb then pcall(function()bb:FireServer(0.40000000596046448,1)
 end)end;
-if bh then pcall(function()bh:FireServer(bv[1][2],bv)end)end;
-local bw=bu:FindFirstChild("LeftClickRemote")local bo=Z(N)if bw and bw:IsA("RemoteEvent")and bm and bo then local bx=k(bm.Position.X-bo.Position.X,0,bm.Position.Z-bo.Position.Z)
-if bx.Magnitude>0 then pcall(function()bw:FireServer(bx.Unit,1)end)end end end end;
-n(math.max(C.delay,A.delay[1]))end end)o(function()n(1)while y.running do local N=m()if C.v3 and bi and N and _(N)
-then pcall(function()bi:FireServer("ActivateAbility")end)n(0.5)else n(0.2)end end end)o(function()while y.running do local N=m()
-local by=N and N:FindFirstChild("RaceEnergy")local bz=N and N:FindFirstChild("RaceTransformed")if C.v4 and by and bz and by.Value>=1 and not bz.Value and _(N)
-then local bA=h:FindFirstChild("Backpack")local bu=bA and bA:FindFirstChild("Awakening")or N:FindFirstChild("Awakening")
-local bB=bu and bu:FindFirstChild("RemoteFunction")if bB then pcall(function()bB:InvokeServer(true)end)end end;
-n(0.1)end end)end)T("as",function()local function bC(bD)local a0=X(bD)if not a0 then return end;
-K(a0.Seated,function(bE)if C.antiSit and bE then pcall(function()a0.Sit=false end)pcall(function()a0:ChangeState(Enum.HumanoidStateType.GettingUp)
+if bc then pcall(function()bc:FireServer(bq[1][2],bq)end)end;
+local br=bp:FindFirstChild("LeftClickRemote")local bj=Z(N)if br and br:IsA("RemoteEvent")and bh and bj then local bs=k(bh.Position.X-bj.Position.X,0,bh.Position.Z-bj.Position.Z)
+if bs.Magnitude>0 then pcall(function()br:FireServer(bs.Unit,1)end)end end end end;
+n(math.max(C.delay,A.delay[1]))end end)o(function()n(1)while y.running do local N=m()if C.v3 and bd and N and _(N)
+then pcall(function()bd:FireServer("ActivateAbility")end)n(0.5)else n(0.2)end end end)o(function()while y.running do local N=m()
+local bt=N and N:FindFirstChild("RaceEnergy")local bu=N and N:FindFirstChild("RaceTransformed")if C.v4 and bt and bu and bt.Value>=1 and not bu.Value and _(N)
+then local bv=h:FindFirstChild("Backpack")local bp=bv and bv:FindFirstChild("Awakening")or N:FindFirstChild("Awakening")
+local bw=bp and bp:FindFirstChild("RemoteFunction")if bw then pcall(function()bw:InvokeServer(true)end)end end;
+n(0.1)end end)end)T("as",function()local function bx(by)local a0=X(by)if not a0 then return end;
+K(a0.Seated,function(bz)if C.asit and bz then pcall(function()a0.Sit=false end)pcall(function()a0:ChangeState(Enum.HumanoidStateType.GettingUp)
 end)end end)end;
-if m()then bC(m())end;
-K(h.CharacterAdded,bC)end)T("esp",function()local bF={}local function bG(v)if bF[v]then return bF[v]end;
-local bH=ad("Frame",{BackgroundColor3=l(255,70,70),BorderSizePixel=0,Visible=false},a6)bH.AnchorPoint=Vector2.new(0,0.5)
+if m()then bx(m())end;
+K(h.CharacterAdded,bx)end)T("esp",function()local bA={}local function bB(v)if bA[v]then return bA[v]end;
+local bC=ad("Frame",{BackgroundColor3=l(255,70,70),BorderSizePixel=0,Visible=false},a6)bC.AnchorPoint=Vector2.new(0,0.5)
 local ao=ad("TextLabel",{Size=i(0,160,0,32),BackgroundTransparency=1,Text="",TextColor3=ac,Font=Enum.Font.GothamBold,TextSize=13,TextXAlignment=r},a6)
 ao.TextStrokeTransparency=0;
 ao.Visible=false;
-bF[v]={line=bH,txt=ao}return bF[v]end;
-local function bI(aS)local v=aS+1;
-while bF[v]do bF[v].line.Visible=false;
-bF[v].txt.Visible=false;
+bA[v]={line=bC,txt=ao}return bA[v]end;
+local function bD(aS)local v=aS+1;
+while bA[v]do bA[v].line.Visible=false;
+bA[v].txt.Visible=false;
 v=v+1 end end;
-K(b.RenderStepped,function()if not C.espNpc then bI(0)return end;
-local bJ=e.CurrentCamera;
-local bs=e:FindFirstChild("Enemies")if not bJ or not bs then bI(0)return end;
-local bo=Z(m())local aS=0;
-for S,Y in ipairs(bs:GetChildren())do local a0,a2=X(Y),Z(Y)if a0 and a2 and a0.Health>0 then local aM,bK=bJ:WorldToViewportPoint(a2.Position)
-if bK then aS=aS+1;
-local bL=bG(aS)local bM,bN=bJ.ViewportSize.X/2,bJ.ViewportSize.Y;
-local bO,bP=aM.X-bM,aM.Y-bN;
-local bQ=bo and(a2.Position-bo.Position).Magnitude or 0;
-bL.line.Position=i(0,bM,0,bN)bL.line.Size=i(0,math.sqrt(bO*bO+bP*bP),0,1)bL.line.Rotation=math.deg(math.atan2(bP,bO))
-bL.line.Visible=true;
-bL.txt.Position=i(0,aM.X+6,0,aM.Y-10)bL.txt.Text=string.format("%d HP | %dm",math.floor(a0.Health),math.floor(bQ))
-bL.txt.Visible=true end end end;
-bI(aS)end)end)T("fl",function()local function bR(bS,bT)if CFrame.lookAt then return CFrame.lookAt(bS,bT)end;
-return CFrame.new(bS,bT)end;
-local bU={}local function bV(bb)if bb then local bD=m()if not bD then return end;
-for S,ax in ipairs(bD:GetDescendants())do if ax:IsA("BasePart")then if bU[ax]==nil then bU[ax]=ax.CanCollide end;
-ax.CanCollide=false end end else for bW,bX in pairs(bU)do if bW and bW.Parent then bW.CanCollide=bX end;
-bU[bW]=nil end end end;
-local bY,bZ=64,26;
-local b_=ad("Frame",{Size=j(bY,bY),Position=i(0,C.flX,1,C.flY),BackgroundColor3=a8,BackgroundTransparency=.5,Visible=C.flVis and C.fl},a6)
-ag(b_,bY/2)ad("UIStroke",{Color=ac,Thickness=1,Transparency=.4},b_)local c0=ad("TextButton",{Size=j(bZ,bZ),Position=i(0.5,-bZ/2,0.5,-bZ/2),BackgroundColor3=ac,Text="",AutoButtonColor=false},b_)
-ag(c0,bZ/2)local function c1(ao,b4)local a4=ad("TextButton",{Size=j(44,44),Position=i(0,C.flX+bY+8,1,C.flY+b4),BackgroundColor3=a8,BackgroundTransparency=.35,Text=ao,TextColor3=ac,Font=q,TextSize=18,AutoButtonColor=false,Visible=C.flVis and C.fl},a6)
+K(b.RenderStepped,function()if not C.enp then bD(0)return end;
+local bE=e.CurrentCamera;
+local bn=e:FindFirstChild("Enemies")if not bE or not bn then bD(0)return end;
+local bj=Z(m())local aS=0;
+for S,Y in ipairs(bn:GetChildren())do local a0,a2=X(Y),Z(Y)if a0 and a2 and a0.Health>0 then local aM,bF=bE:WorldToViewportPoint(a2.Position)
+if bF then aS=aS+1;
+local bG=bB(aS)local bH,bI=bE.ViewportSize.X/2,bE.ViewportSize.Y;
+local bJ,bK=aM.X-bH,aM.Y-bI;
+local bL=bj and(a2.Position-bj.Position).Magnitude or 0;
+bG.line.Position=i(0,bH,0,bI)bG.line.Size=i(0,math.sqrt(bJ*bJ+bK*bK),0,1)bG.line.Rotation=math.deg(math.atan2(bK,bJ))
+bG.line.Visible=true;
+bG.txt.Position=i(0,aM.X+6,0,aM.Y-10)bG.txt.Text=string.format("%d|%dm",math.floor(a0.Health),math.floor(bL))bG.txt.Visible=true end end end;
+bD(aS)end)end)T("fl",function()local function bM(bN,bO)if CFrame.lookAt then return CFrame.lookAt(bN,bO)end;
+return CFrame.new(bN,bO)end;
+local bP={}local function bQ(b6)if b6 then local by=m()if not by then return end;
+for S,ax in ipairs(by:GetDescendants())do if ax:IsA("BasePart")then if bP[ax]==nil then bP[ax]=ax.CanCollide end;
+ax.CanCollide=false end end else for bR,bS in pairs(bP)do if bR and bR.Parent then bR.CanCollide=bS end;
+bP[bR]=nil end end end;
+local bT,bU=64,26;
+local bV=ad("Frame",{Size=j(bT,bT),Position=i(0,C.fx2,1,C.fy2),BackgroundColor3=a8,BackgroundTransparency=.5,Visible=C.fw and C.fl},a6)
+ag(bV,bT/2)ad("UIStroke",{Color=ac,Thickness=1,Transparency=.4},bV)local bW=ad("TextButton",{Size=j(bU,bU),Position=i(0.5,-bU/2,0.5,-bU/2),BackgroundColor3=ac,Text="",AutoButtonColor=false},bV)
+ag(bW,bU/2)local function bX(ao,a_)local a4=ad("TextButton",{Size=j(44,44),Position=i(0,C.fx2+bT+8,1,C.fy2+a_),BackgroundColor3=a8,BackgroundTransparency=.35,Text=ao,TextColor3=ac,Font=q,TextSize=18,AutoButtonColor=false,Visible=C.fw and C.fl},a6)
 ag(a4,10)return a4 end;
-local c2=c1("▲",-70)local c3=c1("▼",0)P("fl",function()b_.Visible=C.flVis and C.fl;
-c2.Visible=b_.Visible;
-c3.Visible=b_.Visible end)P("flVis",function()b_.Visible=C.flVis and C.fl;
-c2.Visible=b_.Visible;
-c3.Visible=b_.Visible end)local c4,c5,c6=0,0,0;
-local c7,bc=false,nil;
-K(c0.InputBegan,function(v)if u(v)then c7,bc=true,v end end)K(c.InputChanged,function(v)if not c7 or not x(v)then return end;
-local c8=b_.AbsolutePosition+b_.AbsoluteSize/2;
-local c9=Vector2.new(v.Position.X,v.Position.Y)-c8;
-local ca=bY/2;
-if c9.Magnitude>ca then c9=c9.Unit*ca end;
-c0.Position=i(0.5,c9.X-bZ/2,0.5,c9.Y-bZ/2)c4,c5=c9.X/ca,c9.Y/ca end)K(c.InputEnded,function(v)if c7 and(v==bc or u(v))
-then c7=false;
-c4,c5=0,0;
-c0.Position=i(0.5,-bZ/2,0.5,-bZ/2)end end)local function cb(cc,aC)K(cc.InputBegan,function(v)if u(v)then aC(1)end end)
-K(cc.InputEnded,function(v)if u(v)then aC(0)end end)end;
-cb(c2,function(I)c6=I end)cb(c3,function(I)c6=-I end)K(b_.InputBegan,function(v)if not u(v)or C.flLock then return end;
-local av,aw=v.Position,b_.Position;
-local cd;
-cd=c.InputChanged:Connect(function(ce)if not x(ce)then return end;
-local ax=ce.Position-av;
-local cf,cg=aw.X.Offset+ax.X,aw.Y.Offset+ax.Y;
-b_.Position=i(0,cf,1,cg)c2.Position=i(0,cf+bY+8,1,cg-70)c3.Position=i(0,cf+bY+8,1,cg)C.flX,C.flY=cf,cg end)local ch;
-ch=c.InputEnded:Connect(function(ce)if ce==v or u(ce)then cd:Disconnect()ch:Disconnect()F()end end)end)K(b.RenderStepped,function(ci)
-if not C.fl then return end;
-local bD=m()local a2,a0=Z(bD),X(bD)if not a2 or not a0 or a0.Health<=0 then return end;
-local bJ=e.CurrentCamera;
-local cj=bJ and bJ.CFrame.LookVector or k(0,0,-1)local ck=k(cj.X,0,cj.Z)ck=ck.Magnitude>0.01 and ck.Unit or k(0,0,-1)
-local cl=k(ck.Z,0,-ck.X)local cm=ck*-c5+cl*c4;
+local bY=bX("▲",-70)local bZ=bX("▼",0)local function b_()bV.Visible=C.fw and C.fl;
+bY.Visible=bV.Visible;
+bZ.Visible=bV.Visible end;
+P("fl",b_)P("fw",b_)local c0,c1,c2=0,0,0;
+local c3,b7=false,nil;
+K(bW.InputBegan,function(v)if u(v)then c3,b7=true,v end end)K(c.InputChanged,function(v)if not c3 or not x(v)then return end;
+local c4=bV.AbsolutePosition+bV.AbsoluteSize/2;
+local c5=Vector2.new(v.Position.X,v.Position.Y)-c4;
+local c6=bT/2;
+if c5.Magnitude>c6 then c5=c5.Unit*c6 end;
+bW.Position=i(0.5,c5.X-bU/2,0.5,c5.Y-bU/2)c0,c1=c5.X/c6,c5.Y/c6 end)K(c.InputEnded,function(v)if c3 and(v==b7 or u(v))
+then c3=false;
+c0,c1=0,0;
+bW.Position=i(0.5,-bU/2,0.5,-bU/2)end end)local function c7(c8,aC)K(c8.InputBegan,function(v)if u(v)then aC(1)end end)
+K(c8.InputEnded,function(v)if u(v)then aC(0)end end)end;
+c7(bY,function(I)c2=I end)c7(bZ,function(I)c2=-I end)K(b.RenderStepped,function(c9)if not C.fl then return end;
+local by=m()local a2,a0=Z(by),X(by)if not a2 or not a0 or a0.Health<=0 then return end;
+local bE=e.CurrentCamera;
+local ca=bE and bE.CFrame.LookVector or k(0,0,-1)local cb=k(ca.X,0,ca.Z)cb=cb.Magnitude>0.01 and cb.Unit or k(0,0,-1)
+local cc=k(cb.Z,0,-cb.X)local cd=cb*-c1+cc*c0;
 a0.PlatformStand=true;
-if cm.Magnitude>0.05 or c6~=0 then if cm.Magnitude>1 then cm=cm.Unit end;
-a2.AssemblyLinearVelocity=cm*C.flVel+k(0,c6*C.flVel,0)if cm.Magnitude>0.05 then a2.CFrame=bR(a2.Position,a2.Position+cm)
-end else a2.AssemblyLinearVelocity=k(0,0,0)end end)K(b.Stepped,function()if C.fl then pcall(bV,true)end end)P("fl",function()
-if not C.fl then local bD=m()local a0=X(bD)if a0 then a0.PlatformStand=false end;
-pcall(bV,false)end end)end)T("t",function()local cn=RaycastParams.new()cn.FilterType=Enum.RaycastFilterType.Exclude;
-cn.RespectCanCollide=true;
-local function co(cp)local cq=cp:FindFirstChild("TurboLV")if cq then return cq end;
-local cr=Instance.new("Attachment")cr.Name="TurboAtt"cr.Parent=cp;
-cq=Instance.new("LinearVelocity")cq.Name="TurboLV"cq.Attachment0=cr;
-cq.RelativeTo=Enum.ActuatorRelativeTo.World;
-cq.VelocityConstraintMode=Enum.VelocityConstraintMode.Vector;
-cq.ForceLimitMode=Enum.ForceLimitMode.PerAxis;
-cq.MaxAxesForce=k(1e9,0,1e9)cq.VectorVelocity=Vector3.zero;
-cq.Parent=cp;
-return cq end;
-local function cs(cp,bx,ct,ci)cn.FilterDescendantsInstances={m()}local cu=math.min(ci,1/20)local cv=ct*cu*2+D;
-local cw=ct;
-for S,cx in ipairs({-1,0.5,2})do local cy=cp.Position+k(0,cx,0)local a2=e:Raycast(cy,bx*cv,cn)if a2 then local cz=math.max(0,(a2.Distance-D)/(cu*2))
-cw=math.min(cw,cz)end end;
-return cw end;
-local cA=0;
-local function cB()if not C.inf then return end;
-local cC=os.clock()if cC-cA<0.12 then return end;
-cA=cC;
-local bD=m()local a0,a2=X(bD),Z(bD)if not a0 or not a2 or a0.Health<=0 then return end;
+if cd.Magnitude>0.05 or c2~=0 then if cd.Magnitude>1 then cd=cd.Unit end;
+a2.AssemblyLinearVelocity=cd*C.fv+k(0,c2*C.fv,0)if cd.Magnitude>0.05 then a2.CFrame=bM(a2.Position,a2.Position+cd)
+end else a2.AssemblyLinearVelocity=k(0,0,0)end end)K(b.Stepped,function()if C.fl then pcall(bQ,true)end end)P("fl",function()
+if not C.fl then local by=m()local a0=X(by)if a0 then a0.PlatformStand=false end;
+pcall(bQ,false)end end)end)T("t",function()local ce=RaycastParams.new()ce.FilterType=Enum.RaycastFilterType.Exclude;
+ce.RespectCanCollide=true;
+local function cf(cg)local ch=cg:FindFirstChild("TurboLV")if ch then return ch end;
+local ci=Instance.new("Attachment")ci.Name="TurboAtt"ci.Parent=cg;
+ch=Instance.new("LinearVelocity")ch.Name="TurboLV"ch.Attachment0=ci;
+ch.RelativeTo=Enum.ActuatorRelativeTo.World;
+ch.VelocityConstraintMode=Enum.VelocityConstraintMode.Vector;
+ch.ForceLimitMode=Enum.ForceLimitMode.PerAxis;
+ch.MaxAxesForce=k(1e9,0,1e9)ch.VectorVelocity=Vector3.zero;
+ch.Parent=cg;
+return ch end;
+local function cj(cg,bs,ck,c9)ce.FilterDescendantsInstances={m()}local cl=math.min(c9,1/20)local cm=ck*cl*2+D;
+local cn=ck;
+for S,co in ipairs({-1,0.5,2})do local cp=cg.Position+k(0,co,0)local a2=e:Raycast(cp,bs*cm,ce)if a2 then local cq=math.max(0,(a2.Distance-D)/(cl*2))
+cn=math.min(cn,cq)end end;
+return cn end;
+local cr=0;
+local function cs()if not C.inf then return end;
+local ct=os.clock()if ct-cr<0.12 then return end;
+cr=ct;
+local by=m()local a0,a2=X(by),Z(by)if not a0 or not a2 or a0.Health<=0 then return end;
 a0:ChangeState(Enum.HumanoidStateType.Jumping)local I=a2.AssemblyLinearVelocity;
 a2.AssemblyLinearVelocity=k(I.X,C.forcaPulo,I.Z)end;
-K(c.JumpRequest,cB)K(b.Heartbeat,function(ci)local bD=m()local a0,a2=X(bD),Z(bD)if not a0 or not a2 then return end;
-if C.inf and a0.Jump then cB()end;
-if not C.turboOn the
+K(c.JumpRequest,cs)K(b.Heartbeat,function(c9)local by=m()local a0,a2=X(by),Z(by)if not a0 or not a2 then return end;
+if C.inf and a0.Jump then cs()end;
+if not C.turboOn then local cu=a2:FindFirstChild("TurboLV")if cu then cu.Enabled=false end else local ch=cf(a2)
+ch.Enabled=true;
+local Y=a0.MoveDirection;
+local cv=k(Y.X,0,Y.Z)if cv.Magnitude<0.1 then ch.VectorVelocity=Vector3.zero else local bs=cv.Unit;
+ch.VectorVelocity=bs*cj(a2,bs,C.forcaTurbo,c9)end end end)end)T("v",function()local cw=0.4;
+local cx={t=nil,n=0,s=nil,c={},h=nil,p={},q=-100}local function cy(bN,bO)if CFrame.lookAt then return CFrame.lookAt(bN,bO)
+end;
+return CFrame.new(bN,bO)end;
+local function cz(Y)return Y~=nil and Y.Parent~=nil and _(Y)and Z(Y)~=nil end;
+local function cA()local ct=os.clock()if ct-cx.q<1 then return cx.p end;
+cx.q=ct;
+local cB={}local function bk(Y)if Y and Y:IsA("Model")and Y~=m()and a:GetPlayerFromCharacter(Y)==nil and cz(Y)then table.insert(cB,Y)
+end end;
+local bn=e:FindFirstChild("Enemies")if bn then for S,Y in ipairs(bn:GetChildren())do bk(Y)end end;
+cx.p=cB;
+return cB end;
+local function cC()local cD=Z(m())if not cD then return nil end;
+local cE={}if C.npcAlvo then cE=cA()else for S,ae in ipairs(a:GetPlayers())do if ae~=h and ae.Character and cz(ae.Character)
+then table.insert(cE,ae.Character)end end end;
+local cF,cG;
+for S,Y in ipairs(cE)do if cz(Y)then local ax=(Z(Y)
