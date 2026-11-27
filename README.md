@@ -1,4 +1,4 @@
--- BrookhavenCarroLok_v5.lua
+-- BrookhavenCarroLok_v2.lua
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UIS = game:GetService("UserInputService")
@@ -9,10 +9,8 @@ local player = Players.LocalPlayer
 local parentGui
 pcall(function() parentGui = (gethui and gethui()) or game:GetService("CoreGui") end)
 if not parentGui then parentGui = player:WaitForChild("PlayerGui") end
-for _, c in ipairs({parentGui, player:FindFirstChildOfClass("PlayerGui")}) do
-	local o = c and c:FindFirstChild("BrookhavenSusp")
-	if o then o:Destroy() end
-end
+local old = parentGui:FindFirstChild("BrookhavenSusp")
+if old then old:Destroy() end
 
 -- Estado e salvamento
 local FILE = "BrookhavenSusp.json"
@@ -23,26 +21,9 @@ local S = {
 	fh = 0, rh = 0,
 	nocol = false, locked = false,
 	hop = 4,
-	colors = {b = 1, d = 1, p = 1, h = 1, e = 1, a = 1},
-	stab = false, wall = false,
 	pos = {},
 }
 local MODES = {"Balanço", "Sobe e desce", "Frente e trás", "Onda", "Diagonal"}
-local COLORS = {
-	{"Preto", Color3.fromRGB(0, 0, 0)},
-	{"Vermelho", Color3.fromRGB(200, 30, 30)},
-	{"Azul", Color3.fromRGB(30, 90, 220)},
-	{"Roxo", Color3.fromRGB(130, 50, 200)},
-	{"Rosa", Color3.fromRGB(230, 70, 150)},
-	{"Laranja", Color3.fromRGB(240, 130, 20)},
-	{"Ciano", Color3.fromRGB(0, 150, 180)},
-	{"Cinza", Color3.fromRGB(110, 110, 110)},
-}
-local function ci(key)
-	local i = S.colors[key]
-	if type(i) ~= "number" or i < 1 or i > #COLORS then i = 1 end
-	return i
-end
 
 local function save()
 	if writefile then
@@ -225,7 +206,6 @@ end
 local gui = Instance.new("ScreenGui")
 gui.Name = "BrookhavenSusp"
 gui.ResetOnSpawn = false
-gui.DisplayOrder = 999
 gui.Parent = parentGui
 
 local function corner(o, r) Instance.new("UICorner", o).CornerRadius = UDim.new(0, r) end
@@ -325,7 +305,7 @@ body.BackgroundTransparency = 1
 body.BorderSizePixel = 0
 body.ScrollBarThickness = 4
 body.ScrollingDirection = Enum.ScrollingDirection.Y
-body.CanvasSize = UDim2.new(0, 0, 0, 842)
+body.CanvasSize = UDim2.new(0, 0, 0, 590)
 body.Parent = win
 
 local function label(y)
@@ -378,20 +358,11 @@ local bCol = btn(body, "Colisão do carro: ON", 10, 426, 200, 36)
 local pL = label(468)
 local pMinus = btn(body, "P-", 10, 468, 46, 36)
 local pPlus = btn(body, "P+", 164, 468, 46, 36)
-local bStab = btn(body, "Equilíbrio: OFF", 10, 510, 200, 36)
-local bWall = btn(body, "Parede: OFF", 10, 552, 200, 36)
-local bcB = btn(body, "B", 10, 594, 97, 36)
-local bcD = btn(body, "D", 113, 594, 97, 36)
-local bcP = btn(body, "P", 10, 636, 97, 36)
-local bcH = btn(body, "H", 113, 636, 97, 36)
-local bcE = btn(body, "E", 10, 678, 97, 36)
-local bcA = btn(body, "A", 113, 678, 97, 36)
-local bLock = btn(body, "Cadeado: OFF", 10, 720, 200, 36)
-local bReset = btn(body, "Resetar tudo", 10, 762, 200, 36)
+local bLock = btn(body, "Cadeado: OFF", 10, 510, 200, 36)
 
 status = Instance.new("TextLabel")
 status.Size = UDim2.new(1, -20, 0, 20)
-status.Position = UDim2.new(0, 10, 0, 806)
+status.Position = UDim2.new(0, 10, 0, 554)
 status.BackgroundTransparency = 1
 status.TextColor3 = Color3.fromRGB(200, 200, 200)
 status.Font = Enum.Font.Gotham
@@ -439,34 +410,6 @@ hopBall.AutoButtonColor = false
 hopBall.Parent = gui
 corner(hopBall, 30)
 
-local ballE = Instance.new("TextButton")
-ballE.Size = UDim2.new(0, 60, 0, 60)
-ballE.Position = UDim2.new(1, -160, 0.5, 0)
-ballE.BackgroundColor3 = Color3.new(0, 0, 0)
-ballE.BackgroundTransparency = 0.25
-ballE.Text = "E"
-ballE.TextColor3 = Color3.new(1, 1, 1)
-ballE.Font = Enum.Font.GothamBold
-ballE.TextSize = 22
-ballE.AutoButtonColor = false
-ballE.Parent = gui
-corner(ballE, 30)
-
-local ballA = Instance.new("TextButton")
-ballA.Size = UDim2.new(0, 60, 0, 60)
-ballA.Position = UDim2.new(1, -160, 0.5, -80)
-ballA.BackgroundColor3 = Color3.new(0, 0, 0)
-ballA.BackgroundTransparency = 0.25
-ballA.Text = "A"
-ballA.TextColor3 = Color3.new(1, 1, 1)
-ballA.Font = Enum.Font.GothamBold
-ballA.TextSize = 22
-ballA.AutoButtonColor = false
-ballA.Parent = gui
-corner(ballA, 30)
-
-local applyColors
-
 local function fmt(v) return string.format("%+.1f", v) end
 
 local function refresh()
@@ -474,8 +417,6 @@ local function refresh()
 	bMol.Text = "Molenga: " .. (S.molenga and "ON" or "OFF")
 	bCol.Text = "Colisão do carro: " .. (S.nocol and "OFF" or "ON")
 	bLock.Text = "Cadeado: " .. (S.locked and "ON" or "OFF")
-	bStab.Text = "Equilíbrio: " .. (S.stab and "ON" or "OFF")
-	bWall.Text = "Parede: " .. (S.wall and "ON" or "OFF")
 	bMode.Text = "Modo: " .. MODES[S.dmode]
 	hL.Text = "Altura: " .. string.format("%.1f", S.height)
 	mL.Text = "Maciez: " .. string.format("%.1f", S.soft)
@@ -485,7 +426,13 @@ local function refresh()
 	rhL.Text = "Trás: " .. fmt(S.rh)
 	dL.Text = "Dança: " .. S.dlevel .. "/10"
 	pL.Text = "Pulo: " .. S.hop .. "/10"
-	if applyColors then applyColors() end
+	if S.dance then
+		danceBall.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
+		danceBall.BackgroundTransparency = 0.1
+	else
+		danceBall.BackgroundColor3 = Color3.new(0, 0, 0)
+		danceBall.BackgroundTransparency = 0.25
+	end
 	if S.on then
 		local car, seat = getCar()
 		if car and seat then
@@ -500,8 +447,7 @@ end
 
 local function change()
 	save()
-	local ok, e = pcall(refresh)
-	if not ok then status.Text = "Erro: " .. tostring(e):sub(1, 60) end
+	refresh()
 end
 
 bToggle.MouseButton1Click:Connect(function()
@@ -542,32 +488,6 @@ rhPlus.MouseButton1Click:Connect(function() S.rh = math.min(3, S.rh + 0.5); chan
 pMinus.MouseButton1Click:Connect(function() S.hop = math.max(1, S.hop - 1); change() end)
 pPlus.MouseButton1Click:Connect(function() S.hop = math.min(10, S.hop + 1); change() end)
 
-local function cycle(key) S.colors[key] = ci(key) % #COLORS + 1; change() end
-bcB.MouseButton1Click:Connect(function() cycle("b") end)
-bcD.MouseButton1Click:Connect(function() cycle("d") end)
-bcP.MouseButton1Click:Connect(function() cycle("p") end)
-bcH.MouseButton1Click:Connect(function() cycle("h") end)
-bcE.MouseButton1Click:Connect(function() cycle("e") end)
-bcA.MouseButton1Click:Connect(function() cycle("a") end)
-
-local function toggleStab() S.stab = not S.stab; change() end
-local function toggleWall() S.wall = not S.wall; change() end
-bStab.MouseButton1Click:Connect(toggleStab)
-bWall.MouseButton1Click:Connect(toggleWall)
-
-local resetPositions
-bReset.MouseButton1Click:Connect(function()
-	restore(); restoreCol()
-	S.on, S.height, S.soft, S.force = false, -1.5, 0.3, 60
-	S.molenga, S.level, S.dance, S.dlevel, S.dmode = false, 5, false, 5, 1
-	S.fh, S.rh, S.hop, S.nocol, S.locked, S.stab, S.wall = 0, 0, 4, false, false, false, false
-	S.colors = {b = 1, d = 1, p = 1, h = 1, e = 1, a = 1}
-	S.pos = {}
-	if resetPositions then resetPositions() end
-	change()
-	status.Text = "Tudo resetado"
-end)
-
 -- Loop: reaplica ao trocar de carro e cuida da colisão
 task.spawn(function()
 	while gui.Parent do
@@ -583,26 +503,9 @@ task.spawn(function()
 	end
 end)
 
--- Mostra erros na tela em vez de quebrar o script
-local lastErr = 0
-local function report(where, e)
-	if os.clock() - lastErr > 2 then
-		lastErr = os.clock()
-		status.Text = "Erro " .. where .. ": " .. tostring(e):sub(1, 60)
-		warn("[CarroLok] " .. where .. ": " .. tostring(e))
-	end
-end
-
-local function beat(name, fn)
-	return RunService.Heartbeat:Connect(function(dt)
-		local ok, e = pcall(fn, dt)
-		if not ok then report(name, e) end
-	end)
-end
-
 -- Inclinação (molenga)
 local prevV = nil
-local hb = beat("molenga", function(dt)
+local hb = RunService.Heartbeat:Connect(function(dt)
 	if not (S.on and S.molenga and S.level > 0) or dt <= 0 then prevV = nil return end
 	local car, seat = getCar()
 	if not seat then prevV = nil return end
@@ -618,4 +521,107 @@ local hb = beat("molenga", function(dt)
 			local lon = math.clamp(acc:Dot(look), -60, 60)
 			local lat = math.clamp(acc:Dot(right), -60, 60)
 			local k = S.level * 0.015
-			local ang = seat.AssemblyAngularVel
+			local ang = seat.AssemblyAngularVelocity
+			ang = ang + right * (lon * k * dt) - look * (lat * k * dt)
+			if ang.Magnitude > 3 then ang = ang.Unit * 3 end
+			seat.AssemblyAngularVelocity = ang
+		end
+	end
+	prevV = v
+end)
+
+-- Dança: cada modo move as molas de um jeito
+local function wave(o, ph)
+	local m = S.dmode
+	if m == 1 then return math.sin(ph) * o.sx                      -- balanço (lado a lado)
+	elseif m == 2 then return math.sin(ph)                         -- sobe e desce (tudo junto)
+	elseif m == 3 then return math.sin(ph) * o.sz                  -- frente e trás (cabeceio)
+	elseif m == 4 then return math.sin(ph + math.atan2(o.sx, o.sz)) -- onda em volta do carro
+	else return math.sin(ph) * o.sx * o.sz end                     -- diagonal
+end
+
+local hb2 = RunService.Heartbeat:Connect(function()
+	if not (S.on and S.dance) then return end
+	local ph = os.clock() * (3 + S.dlevel * 0.5)
+	local amp = S.dlevel * 0.4
+	for sp, o in pairs(cache) do
+		if sp.Parent then
+			pcall(function()
+				sp.FreeLength = math.max(0.2, baseFree(o) + wave(o, ph) * amp)
+			end)
+		end
+	end
+end)
+
+drag(ball, ball, function()
+	local car, seat = getCar()
+	if car and seat then
+		local root = player.Character and player.Character:FindFirstChild("HumanoidRootPart")
+		local dir = (root and root.CFrame.LookVector) or seat.CFrame.LookVector
+		dir = Vector3.new(dir.X, 0, dir.Z)
+		if dir.Magnitude > 0 then
+			seat.AssemblyLinearVelocity = seat.AssemblyLinearVelocity + dir.Unit * S.force
+		end
+	else
+		status.Text = "Sente no carro"
+	end
+end, true, "ball")
+
+drag(danceBall, danceBall, function()
+	S.dance = not S.dance
+	if S.dance then S.on = true end
+	change()
+end, true, "dball")
+
+-- Pulinho: sobe o carro de uma vez
+drag(hopBall, hopBall, function()
+	local car, seat = getCar()
+	if car and seat then
+		local v = seat.AssemblyLinearVelocity
+		seat.AssemblyLinearVelocity = Vector3.new(v.X, math.max(v.Y, 0) + S.hop * 5, v.Z)
+	else
+		status.Text = "Sente no carro"
+	end
+end, true, "pball")
+
+-- Botão flutuante H
+local hBtn = Instance.new("TextButton")
+hBtn.Size = UDim2.new(0, 44, 0, 44)
+hBtn.Position = UDim2.new(0, 20, 0, 40)
+hBtn.BackgroundColor3 = Color3.new(0, 0, 0)
+hBtn.BackgroundTransparency = 0.25
+hBtn.Text = "H"
+hBtn.TextColor3 = Color3.new(1, 1, 1)
+hBtn.Font = Enum.Font.GothamBold
+hBtn.TextSize = 18
+hBtn.AutoButtonColor = false
+hBtn.Visible = false
+hBtn.Parent = gui
+corner(hBtn, 22)
+
+loadPos("win", win)
+loadPos("ball", ball)
+loadPos("dball", danceBall)
+loadPos("pball", hopBall)
+loadPos("h", hBtn)
+
+local function setMin(v)
+	win.Visible = not v
+	hBtn.Visible = v
+end
+
+drag(win, bar, nil, false, "win")
+drag(hBtn, hBtn, function()
+	setMin(false)
+end, true, "h")
+bMin.MouseButton1Click:Connect(function() setMin(true) end)
+bClose.MouseButton1Click:Connect(function()
+	hb:Disconnect()
+	hb2:Disconnect()
+	restore()
+	restoreCol()
+	save()
+	gui:Destroy()
+end)
+
+refresh()
