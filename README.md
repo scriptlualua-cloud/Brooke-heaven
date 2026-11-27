@@ -1,4 +1,4 @@
--- BrookhavenCarroLok_v4.lua
+-- BrookhavenCarroLok_v5.lua
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UIS = game:GetService("UserInputService")
@@ -9,8 +9,10 @@ local player = Players.LocalPlayer
 local parentGui
 pcall(function() parentGui = (gethui and gethui()) or game:GetService("CoreGui") end)
 if not parentGui then parentGui = player:WaitForChild("PlayerGui") end
-local old = parentGui:FindFirstChild("BrookhavenSusp")
-if old then old:Destroy() end
+for _, c in ipairs({parentGui, player:FindFirstChildOfClass("PlayerGui")}) do
+	local o = c and c:FindFirstChild("BrookhavenSusp")
+	if o then o:Destroy() end
+end
 
 -- Estado e salvamento
 local FILE = "BrookhavenSusp.json"
@@ -223,6 +225,7 @@ end
 local gui = Instance.new("ScreenGui")
 gui.Name = "BrookhavenSusp"
 gui.ResetOnSpawn = false
+gui.DisplayOrder = 999
 gui.Parent = parentGui
 
 local function corner(o, r) Instance.new("UICorner", o).CornerRadius = UDim.new(0, r) end
@@ -322,7 +325,7 @@ body.BackgroundTransparency = 1
 body.BorderSizePixel = 0
 body.ScrollBarThickness = 4
 body.ScrollingDirection = Enum.ScrollingDirection.Y
-body.CanvasSize = UDim2.new(0, 0, 0, 800)
+body.CanvasSize = UDim2.new(0, 0, 0, 842)
 body.Parent = win
 
 local function label(y)
@@ -384,10 +387,11 @@ local bcH = btn(body, "H", 113, 636, 97, 36)
 local bcE = btn(body, "E", 10, 678, 97, 36)
 local bcA = btn(body, "A", 113, 678, 97, 36)
 local bLock = btn(body, "Cadeado: OFF", 10, 720, 200, 36)
+local bReset = btn(body, "Resetar tudo", 10, 762, 200, 36)
 
 status = Instance.new("TextLabel")
 status.Size = UDim2.new(1, -20, 0, 20)
-status.Position = UDim2.new(0, 10, 0, 764)
+status.Position = UDim2.new(0, 10, 0, 806)
 status.BackgroundTransparency = 1
 status.TextColor3 = Color3.fromRGB(200, 200, 200)
 status.Font = Enum.Font.Gotham
@@ -496,7 +500,8 @@ end
 
 local function change()
 	save()
-	refresh()
+	local ok, e = pcall(refresh)
+	if not ok then status.Text = "Erro: " .. tostring(e):sub(1, 60) end
 end
 
 bToggle.MouseButton1Click:Connect(function()
@@ -550,6 +555,19 @@ local function toggleWall() S.wall = not S.wall; change() end
 bStab.MouseButton1Click:Connect(toggleStab)
 bWall.MouseButton1Click:Connect(toggleWall)
 
+local resetPositions
+bReset.MouseButton1Click:Connect(function()
+	restore(); restoreCol()
+	S.on, S.height, S.soft, S.force = false, -1.5, 0.3, 60
+	S.molenga, S.level, S.dance, S.dlevel, S.dmode = false, 5, false, 5, 1
+	S.fh, S.rh, S.hop, S.nocol, S.locked, S.stab, S.wall = 0, 0, 4, false, false, false, false
+	S.colors = {b = 1, d = 1, p = 1, h = 1, e = 1, a = 1}
+	S.pos = {}
+	if resetPositions then resetPositions() end
+	change()
+	status.Text = "Tudo resetado"
+end)
+
 -- Loop: reaplica ao trocar de carro e cuida da colisão
 task.spawn(function()
 	while gui.Parent do
@@ -565,9 +583,26 @@ task.spawn(function()
 	end
 end)
 
+-- Mostra erros na tela em vez de quebrar o script
+local lastErr = 0
+local function report(where, e)
+	if os.clock() - lastErr > 2 then
+		lastErr = os.clock()
+		status.Text = "Erro " .. where .. ": " .. tostring(e):sub(1, 60)
+		warn("[CarroLok] " .. where .. ": " .. tostring(e))
+	end
+end
+
+local function beat(name, fn)
+	return RunService.Heartbeat:Connect(function(dt)
+		local ok, e = pcall(fn, dt)
+		if not ok then report(name, e) end
+	end)
+end
+
 -- Inclinação (molenga)
 local prevV = nil
-local hb = RunService.Heartbeat:Connect(function(dt)
+local hb = beat("molenga", function(dt)
 	if not (S.on and S.molenga and S.level > 0) or dt <= 0 then prevV = nil return end
 	local car, seat = getCar()
 	if not seat then prevV = nil return end
@@ -583,39 +618,4 @@ local hb = RunService.Heartbeat:Connect(function(dt)
 			local lon = math.clamp(acc:Dot(look), -60, 60)
 			local lat = math.clamp(acc:Dot(right), -60, 60)
 			local k = S.level * 0.015
-			local ang = seat.AssemblyAngularVelocity
-			ang = ang + right * (lon * k * dt) - look * (lat * k * dt)
-			if ang.Magnitude > 3 then ang = ang.Unit * 3 end
-			seat.AssemblyAngularVelocity = ang
-		end
-	end
-	prevV = v
-end)
-
--- Dança: cada modo move as molas de um jeito
-local function wave(o, ph)
-	local m = S.dmode
-	if m == 1 then return math.sin(ph) * o.sx                      -- balanço (lado a lado)
-	elseif m == 2 then return math.sin(ph)                         -- sobe e desce (tudo junto)
-	elseif m == 3 then return math.sin(ph) * o.sz                  -- frente e trás (cabeceio)
-	elseif m == 4 then return math.sin(ph + math.atan2(o.sx, o.sz)) -- onda em volta do carro
-	else return math.sin(ph) * o.sx * o.sz end                     -- diagonal
-end
-
-local hb2 = RunService.Heartbeat:Connect(function()
-	if not (S.on and S.dance) then return end
-	local ph = os.clock() * (3 + S.dlevel * 0.5)
-	local amp = S.dlevel * 0.4
-	for sp, o in pairs(cache) do
-		if sp.Parent then
-			pcall(function()
-				sp.FreeLength = math.max(0.2, baseFree(o) + wave(o, ph) * amp)
-			end)
-		end
-	end
-end)
-
-drag(ball, ball, function()
-	local car, seat = getCar()
-	if car and seat then
-		local root = p
+			local ang = seat.AssemblyAngularVel
